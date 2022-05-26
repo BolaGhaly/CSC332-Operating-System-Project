@@ -1,40 +1,44 @@
-//Preprocessor directive
+// Preprocessor directive
 #ifndef STRING_UTILS_H
 #define STRING_UTILS_H
 
-//header files
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 
-// Global Constants - can be used in other files
-typedef enum { False, True } Boolean;
+typedef enum
+{
+    False,
+    True
+} Boolean;
 
-// config data structure
-typedef struct ConfigDataType {
+typedef struct ConfigDataType
+{
     double version;
-    char metaDataFileName[ 100 ];
+    char metaDataFileName[100];
     int cpuSchedCode;
     int quantumCycles;
     int memAvailable;
     int procCycleRate;
     int ioCycleRate;
     int logToCode;
-    char logToFileName[ 100 ];
+    char logToFileName[100];
 } ConfigDataType;
 
-typedef struct OpCodeType {
+typedef struct OpCodeType
+{
     int pid;
-    char command[ 5 ];
-    char inOutArg[ 5 ];
-    char strArg1[ 15 ];
+    char command[5];
+    char inOutArg[5];
+    char strArg1[15];
     int intArg2;
     int intArg3;
     double opEndTime;
-    struct OpCodeType * nextNode;
+    struct OpCodeType *nextNode;
 } OpCodeType;
 
-typedef enum StringManipCode {
+typedef enum StringManipCode
+{
     NO_ERR,
     INCOMPLETE_FILE_ERR,
     INPUT_BUFFER_OVERRUN_ERR,
@@ -54,18 +58,18 @@ extern const int SUBSTRING_NOT_FOUND;
 extern const Boolean IGNORE_LEADING_WS;
 extern const Boolean ACCEPT_LEADING_WS;
 
-int getLineTo (FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolean omitLeadingWhiteSpace, Boolean stopAtNonPrintable);
-Boolean isEndOfFile (FILE *filePtr);
-int getStringLength (const char *teststr);
-void copyString (char *destStr, const char *sourceStr);
-void concatenateString (char *destStr, const char *sourceStr);
-int compareString (const char *oneStr, const char *otherStr);
-void getSubString (char *destStr, const char *sourceStr, int startIndex, int endIndex);
-int findSubString (const char *testStr, const char *searchSubStr);
-void setStrToLowerCase (char *destStr, const char *sourceStr);
-char toLowerCase (char testChar);
-bool getStringConstrained (FILE *inStream, bool clearLeadingNonPrintable, bool clearLeadingSpace, bool stopAtNonPrintable, char delimiter, char *capturedString);
-bool getStringToDelimiter (FILE *inStream, char delimited, char *capturedString);
-bool getStringToLineEnd (FILE *inStream, char *capturedString);
+int getLineTo(FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolean omitLeadingWhiteSpace, Boolean stopAtNonPrintable);
+Boolean isEndOfFile(FILE *filePtr);
+int getStringLength(const char *teststr);
+void copyString(char *destStr, const char *sourceStr);
+void concatenateString(char *destStr, const char *sourceStr);
+int compareString(const char *oneStr, const char *otherStr);
+void getSubString(char *destStr, const char *sourceStr, int startIndex, int endIndex);
+int findSubString(const char *testStr, const char *searchSubStr);
+void setStrToLowerCase(char *destStr, const char *sourceStr);
+char toLowerCase(char testChar);
+bool getStringConstrained(FILE *inStream, bool clearLeadingNonPrintable, bool clearLeadingSpace, bool stopAtNonPrintable, char delimiter, char *capturedString);
+bool getStringToDelimiter(FILE *inStream, char delimited, char *capturedString);
+bool getStringToLineEnd(FILE *inStream, char *capturedString);
 
-#endif	//STRING_UTILS_H
+#endif
