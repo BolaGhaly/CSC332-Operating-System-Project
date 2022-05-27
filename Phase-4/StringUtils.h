@@ -1,16 +1,17 @@
-//Preprocessor directive
 #ifndef STRING_UTILS_H
 #define STRING_UTILS_H
 
-//header files
 #include <stdio.h>
 #include <stdlib.h>
 
-// Global Constants - can be used in other files
-typedef enum { False, True } Boolean;
+typedef enum
+{
+    False,
+    True
+} Boolean;
 
-// config data structure
-typedef struct ConfigDataType {
+typedef struct ConfigDataType
+{
     double version;
     char metaDataFileName[100];
     int cpuSchedCode;
@@ -22,7 +23,8 @@ typedef struct ConfigDataType {
     char logToFileName[100];
 } ConfigDataType;
 
-typedef struct OpCodeType {
+typedef struct OpCodeType
+{
     int pid;
     char command[5];
     char inOutArg[5];
@@ -33,7 +35,8 @@ typedef struct OpCodeType {
     struct OpCodeType *nextNode;
 } OpCodeType;
 
-typedef enum StringManipCode {
+typedef enum StringManipCode
+{
     NO_ERR,
     INCOMPLETE_FILE_ERR,
     INPUT_BUFFER_OVERRUN_ERR,
@@ -68,4 +71,4 @@ Boolean isEndOfFile(FILE *filePtr);
 void output(char *message, ConfigDataType *configPtr);
 void output_with_time(char *message, ConfigDataType *configPtr);
 
-#endif	//STRING_UTILS_H
+#endif

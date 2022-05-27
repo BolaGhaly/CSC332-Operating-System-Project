@@ -6,12 +6,16 @@
 #include <math.h>
 #include "configops.h"
 
-enum TIMER_CTRL_CODES { ZERO_TIMER, LAP_TIMER, STOP_TIMER };
+enum TIMER_CTRL_CODES
+{
+  ZERO_TIMER,
+  LAP_TIMER,
+  STOP_TIMER
+};
 
 extern const char RADIX_POINT;
 extern const char SPACE;
 
-// Function Prototypes
 void runTimer(int milliSeconds);
 double accessTimer(int controlCode, char *timeStr);
 double processTime(double startSec, double endSec, double startUSec, double endUSec, char *timeStr);

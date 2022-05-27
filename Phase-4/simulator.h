@@ -1,14 +1,14 @@
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 
-// header files
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
 #include "StringUtils.h"
 #include "configops.h"
 
-typedef enum command_list_s {
+typedef enum command_list_s
+{
     SYS = 10,
     APP,
     DEVIN = 0,
@@ -17,7 +17,8 @@ typedef enum command_list_s {
     MEM
 } command_t;
 
-typedef enum string_args_list_s {
+typedef enum string_args_list_s
+{
     START = 10,
     END,
     PROCESS,
@@ -30,10 +31,11 @@ typedef enum string_args_list_s {
     SERIAL = 4,
     SOUND_SIGNAL = 5,
     USB = 6,
-    VIDEO_SIGNAL= 7
+    VIDEO_SIGNAL = 7
 } string_args_t;
 
-typedef struct executable_s {
+typedef struct executable_s
+{
     command_t command;
     string_args_t strArgs1;
     int intArg2, intArg3;
@@ -46,10 +48,10 @@ typedef struct executable_s {
 #define PROCESS_STATE_RUN 2
 #define PROCESS_STATE_BLOCKED 3
 #define PROCESS_STATE_END 4
-
 #define SMALL_QUANTUM 1e-3
 
-typedef struct process_s {
+typedef struct process_s
+{
     int pid;
     int cur_exe;
     int exe_size;
@@ -60,13 +62,15 @@ typedef struct process_s {
     struct process_s *next;
 } process_t;
 
-typedef struct ready_queue_s {
+typedef struct ready_queue_s
+{
     process_t *head;
     process_t *tail;
     int size;
 } ready_queue_t;
 
-typedef struct sim_s {
+typedef struct sim_s
+{
     int num_ended;
     Boolean interrupt;
     ready_queue_t *interrupt_q;
@@ -75,7 +79,8 @@ typedef struct sim_s {
     pthread_mutex_t mutex;
 } sim_t;
 
-typedef struct block_for_io_args_s {
+typedef struct block_for_io_args_s
+{
     sim_t *sim;
     process_t *proc;
     ConfigDataType *config;
@@ -84,18 +89,18 @@ typedef struct block_for_io_args_s {
 void sim_init(sim_t *sim, ready_queue_t *ready_q);
 void sim_destroy(sim_t *sim);
 
-void* msleep(void *args);
+void *msleep(void *args);
 void timer(double millisecond);
 void initial_process(int non, ConfigDataType *configPtr);
 void memset_usr(char *ptr, int count, char value);
 
-ready_queue_t* rq_new();
+ready_queue_t *rq_new();
 void rq_delete(ready_queue_t *rq);
 void rq_push_back(ready_queue_t *rq, process_t *proc);
 void rq_push_front(ready_queue_t *rq, process_t *proc);
 void rq_insert_cmp_by_remaining_time(ready_queue_t *rq, process_t *proc);
 void rq_insert_cmp_by_pid(ready_queue_t *rq, process_t *proc);
-process_t* rq_pop_front(ready_queue_t *rq);
+process_t *rq_pop_front(ready_queue_t *rq);
 int rq_size(ready_queue_t *rq);
 
 void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr);

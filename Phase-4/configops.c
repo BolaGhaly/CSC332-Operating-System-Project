@@ -1,48 +1,32 @@
-// header file
 #include "configops.h"
-
 
 ConfigDataType *clearConfigData(ConfigDataType *configData)
 {
-    // check that config data pointer is not null
     if (configData != NULL)
     {
-        // free data structure memory
-        // function: free
         free(configData);
-        
-        // set config data to null
         configData = NULL;
     }
-    
-    // set config data pointer to null (returned as parameter)
-    return NULL; //temporary stub return
-}
 
+    return NULL;
+}
 
 void configCodeToString(int code, char *outString)
 {
-    // Define array with eight items, and short (10) lengths
-    char displayStrings[8][10] = { "SJF-N", "SRTF-P", "FCFS-P",
-        "RR-P", "FCFS-N", "Monitor",
-        "File", "Both"};
-    
-    // copy string to return parameter
-    // function: copyString
+    char displayStrings[8][10] = {"SJF-N", "SRTF-P", "FCFS-P",
+                                  "RR-P", "FCFS-N", "Monitor",
+                                  "File", "Both"};
+
     copyString(outString, displayStrings[code]);
 }
 
-
 void displayConfigData(ConfigDataType *configData)
 {
-    // initilizae function/ varibales
     char displayString[STD_STR_LEN];
-    
-    // print lines of display
-    // function: printf, configCodeToString(translates coded items)
+
     printf("Config File Display\n");
     printf("-------------------\n");
-    printf("Version               : %3.2f\n", configData-> version);
+    printf("Version               : %3.2f\n", configData->version);
     printf("Program file name     : %s\n", configData->metaDataFileName);
     configCodeToString(configData->cpuSchedCode, displayString);
     printf("CPU schedule selection: %s\n", displayString);
@@ -55,508 +39,318 @@ void displayConfigData(ConfigDataType *configData)
     printf("Log file name         : %s\n\n", configData->logToFileName);
 }
 
-
 Boolean getConfigData(char *fileName, ConfigDataType **configData,
                       char *endStateMsg)
 {
-    // initialize function/ variables
-    
-    // set constant number of data lines
     const int NUM_DATA_LINES = 9;
-    
-    // set read only constant
     const char READ_ONLY_FLAG[] = "r";
-    
-    // create pointer for data input
+
     ConfigDataType *tempData;
-    
-    // declare other variables
+
     FILE *fileAccessPtr;
     char dataBuffer[MAX_STR_LEN];
     int intData, dataLineCode, lineCtr = 0;
     double doubleData;
     Boolean dontStopAtNonPrintable = False;
-    
-    // set endStateMsg to success
-    // function: copyString
+
     copyString(endStateMsg, "Configuration file upload successful");
-    
-    // initialize config data pointer in case of return error
+
     *configData = NULL;
-    
-    // open file
-    // function: fopen
+
     fileAccessPtr = fopen(fileName, READ_ONLY_FLAG);
-    
-    // check for file open failure
+
     if (fileAccessPtr == NULL)
     {
-        // set end state message to config file access error
-        // function: copyString
         copyString(endStateMsg, "Configuration file access error");
-        
-        // return file access error
         return False;
     }
-    
-    // get first line, check for failure
-    // function: getLineTo
+
     if (getLineTo(fileAccessPtr, MAX_STR_LEN, COLON,
-                 dataBuffer, IGNORE_LEADING_WS, dontStopAtNonPrintable) != NO_ERR
-       || compareString(dataBuffer, "Start Simulator Configuration File") != STR_EQ)
+                  dataBuffer, IGNORE_LEADING_WS, dontStopAtNonPrintable) != NO_ERR ||
+        compareString(dataBuffer, "Start Simulator Configuration File") != STR_EQ)
     {
-        // close file access
-        // function: fclose
         fclose(fileAccessPtr);
-        
-        // set end state message to corrupt leader line error
-        // function: copyString
         copyString(endStateMsg, "Corrupt configuration leader liner error");
-        
-        // return corrupt file data
         return False;
     }
-    
-    // create temporary pointer to configuration data structure
-    tempData = (ConfigDataType *) malloc(sizeof(ConfigDataType));
-    
-    // Loop to end of config data items
+
+    tempData = (ConfigDataType *)malloc(sizeof(ConfigDataType));
+
     while (lineCtr < NUM_DATA_LINES)
     {
-        // get line leader, check for failure
-        // function: getLineTo
         if (getLineTo(fileAccessPtr, MAX_STR_LEN, COLON,
-                     dataBuffer, IGNORE_LEADING_WS, dontStopAtNonPrintable) != NO_ERR)
+                      dataBuffer, IGNORE_LEADING_WS, dontStopAtNonPrintable) != NO_ERR)
         {
-            // free temp struct memory
-            // function: free
             free(tempData);
-            
-            // close file access
-            // function: fclose
             fclose(fileAccessPtr);
-            
-            // set end state message to line capture failure
-            // function: copyString
             copyString(endStateMsg, "Configuration start line capture error");
-            
-            // return incomplete file error
             return False;
         }
-        
-        // find correct data line by number
-        // function: getDataLineCode
+
         dataLineCode = getDataLineCode(dataBuffer);
-        
-        // Check for data line found
+
         if (dataLineCode != CFG_CORRUPT_PROMT_ERR)
         {
-            // Get data value
-            // Check for version number (double value)
             if (dataLineCode == CFG_VERSION_CODE)
             {
-                // Get version number
-                // function: fscanf
                 fscanf(fileAccessPtr, "%lf", &doubleData);
             }
-            
-            // Otherwise, check for metaData or LogTo file names
-            //  or CPU scheduling names (strings)
-            else if (dataLineCode == CFG_MD_FILE_NAME_CODE
-                    || dataLineCode == CFG_LOG_FILE_NAME_CODE
-                    || dataLineCode == CFG_CPU_SCHED_CODE
-                    || dataLineCode == CFG_LOG_TO_CODE)
+            else if (dataLineCode == CFG_MD_FILE_NAME_CODE || dataLineCode == CFG_LOG_FILE_NAME_CODE || dataLineCode == CFG_CPU_SCHED_CODE || dataLineCode == CFG_LOG_TO_CODE)
             {
-                // get string input
-                // function: fscanf
                 fscanf(fileAccessPtr, "%s", dataBuffer);
             }
-            
-            // Otherwise, assume integer data
             else
             {
-                // get integer input
-                // function: fscanf
                 fscanf(fileAccessPtr, "%d", &intData);
             }
-            
-            // check for data value in range
-            // function: valueInRange
+
             if (valueInRange(dataLineCode, intData, doubleData, dataBuffer) == True)
             {
-                // assign to data pointer depending on config item
-                // function: getCpuSchedCode, getLogToCode
-                switch (dataLineCode) {
-                    case CFG_VERSION_CODE:
-                        tempData->version = doubleData;
-                        break;
-                    case CFG_MD_FILE_NAME_CODE:
-                        copyString(tempData->metaDataFileName, dataBuffer);
-                        break;
-                    case CFG_CPU_SCHED_CODE:
-                        tempData->cpuSchedCode= getCpuSchedCode(dataBuffer);
-                        break;
-                    case CFG_QUANT_CYCLES_CODE:
-                        tempData->quantumCycles = intData;
-                        break;
-                    case CFG_MEM_AVAILABLE_CODE:
-                        tempData->memAvailable = intData;
-                        break;
-                    case CFG_PROC_CYCLES_CODE:
-                        tempData->procCycleRate = intData;
-                        break;
-                    case CFG_IO_CYCLES_CODE:
-                        tempData->ioCycleRate = intData;
-                        break;
-                    case CFG_LOG_TO_CODE:
-                        tempData->logToCode = getLogToCode(dataBuffer);
-                        break;
-                    case CFG_LOG_FILE_NAME_CODE:
-                        copyString(tempData->logToFileName, dataBuffer);
-                        break;
+                switch (dataLineCode)
+                {
+                case CFG_VERSION_CODE:
+                    tempData->version = doubleData;
+                    break;
+                case CFG_MD_FILE_NAME_CODE:
+                    copyString(tempData->metaDataFileName, dataBuffer);
+                    break;
+                case CFG_CPU_SCHED_CODE:
+                    tempData->cpuSchedCode = getCpuSchedCode(dataBuffer);
+                    break;
+                case CFG_QUANT_CYCLES_CODE:
+                    tempData->quantumCycles = intData;
+                    break;
+                case CFG_MEM_AVAILABLE_CODE:
+                    tempData->memAvailable = intData;
+                    break;
+                case CFG_PROC_CYCLES_CODE:
+                    tempData->procCycleRate = intData;
+                    break;
+                case CFG_IO_CYCLES_CODE:
+                    tempData->ioCycleRate = intData;
+                    break;
+                case CFG_LOG_TO_CODE:
+                    tempData->logToCode = getLogToCode(dataBuffer);
+                    break;
+                case CFG_LOG_FILE_NAME_CODE:
+                    copyString(tempData->logToFileName, dataBuffer);
+                    break;
                 }
             }
-            
-            // Otherwise, assume data value not in range
             else
             {
-                // free temp struct memory
-                // function: free
                 free(tempData);
-                
-                // close file access
-                // function: fclose
                 fclose(fileAccessPtr);
-                
-                // set end state message to configuration data out of range
-                // function: copyString
                 copyString(endStateMsg, "Configuration item out of range");
-                
-                // Return data out of range
                 return False;
             }
         }
-        
-        // Otherwise, assume data line not found
         else
         {
-            // Free temp struct memory
-            // function: free
             free(tempData);
-            
-            // Close file access
-            // function: fclose
             fclose(fileAccessPtr);
-            
-            // Set end state message to configuration corrupt prompt error
-            // function: copyString
             copyString(endStateMsg, "Corrupted configuration prompt");
-            
-            // Return corrupt config file code
             return False;
         }
-        
-        // increment line counter
+
         lineCtr++;
     }
-    // end master loop
-    
-    // acquire end of sim config string
-    // function: getLineTo
-    if(getLineTo(fileAccessPtr, MAX_STR_LEN, PERIOD,
-                 dataBuffer, IGNORE_LEADING_WS, dontStopAtNonPrintable) != NO_ERR
-       || compareString(dataBuffer,"End Simulator Configuration File")
-       != STR_EQ)
+
+    if (getLineTo(fileAccessPtr, MAX_STR_LEN, PERIOD,
+                  dataBuffer, IGNORE_LEADING_WS, dontStopAtNonPrintable) != NO_ERR ||
+        compareString(dataBuffer, "End Simulator Configuration File") != STR_EQ)
     {
-        // Free temp struct memory
-        // function: free
         free(tempData);
-        
-        // Close file access
-        // function: fclose
         fclose(fileAccessPtr);
-        
-        // set end state message to corrupt configuration end line
-        // function: copyString
         copyString(endStateMsg, "Configuration end line capture error");
-        
-        // return correct file data
         return False;
     }
-    
-    // assign temporary pointer to parameter return pointer
+
     *configData = tempData;
-    
-    // close file access
-    // function: fclose
+
     fclose(fileAccessPtr);
-    
-    // return no error code
+
     return True;
 }
 
-
 ConfigDataCodes getCpuSchedCode(char *codeStr)
 {
-    // initialize function/variables
-    
-    // set up temporary string for testing
-    // fucntion: getStringLength, malloc
     int strLen = getStringLength(codeStr);
-    char *tempStr = (char *) malloc(strLen + 1);
-    
-    // set default return to FCFS-N
+    char *tempStr = (char *)malloc(strLen + 1);
+
     int returnVal = CPU_SCHED_FCFS_N_CODE;
-    
-    // set string to lower case for testing
-    // function: setStrToLowerCase
+
     setStrToLowerCase(tempStr, codeStr);
-    
-    // check for SJF-N
-    // function: compareString
+
     if (compareString(tempStr, "sjf-n") == STR_EQ)
     {
-        // set return code to sjf
         returnVal = CPU_SCHED_SJF_N_CODE;
     }
-    
-    // check for SRTF-P
-    // function: compareString
+
     if (compareString(tempStr, "srtf-p") == STR_EQ)
     {
-        // set return code to srtf
         returnVal = CPU_SCHED_SRTF_P_CODE;
     }
-    
-    // check for FCFS-P
-    // function: compareString
+
     if (compareString(tempStr, "fcfs-p") == STR_EQ)
     {
-        // set return code to fcfs
         returnVal = CPU_SCHED_FCFS_P_CODE;
     }
-    
-    // check for RR-P
-    // function: compareString
+
     if (compareString(tempStr, "rr-p") == STR_EQ)
     {
-        // set return code to rr
         returnVal = CPU_SCHED_RR_P_CODE;
     }
-    
-    // free temp string memory
-    // function: free
+
     free(tempStr);
-    
-    // return resulting value
     return returnVal;
 }
 
-
 int getDataLineCode(char *dataBuffer)
 {
-    // return appropriate code depending on prompt string provided
-    // function: compareString
     if (compareString(dataBuffer, "Version/Phase") == STR_EQ)
     {
         return CFG_VERSION_CODE;
     }
-    
+
     if (compareString(dataBuffer, "File Path") == STR_EQ)
     {
         return CFG_MD_FILE_NAME_CODE;
     }
-    
+
     if (compareString(dataBuffer, "CPU Scheduling Code") == STR_EQ)
     {
         return CFG_CPU_SCHED_CODE;
     }
-    
+
     if (compareString(dataBuffer, "Quantum Time (cycles)") == STR_EQ)
     {
         return CFG_QUANT_CYCLES_CODE;
     }
-    
+
     if (compareString(dataBuffer, "Memory Available (KB)") == STR_EQ)
     {
         return CFG_MEM_AVAILABLE_CODE;
     }
-    
+
     if (compareString(dataBuffer, "Processor Cycle Time (msec)") == STR_EQ)
     {
         return CFG_PROC_CYCLES_CODE;
     }
-    
+
     if (compareString(dataBuffer, "I/O Cycle Time (msec)") == STR_EQ)
     {
         return CFG_IO_CYCLES_CODE;
     }
-    
+
     if (compareString(dataBuffer, "Log To") == STR_EQ)
     {
         return CFG_LOG_TO_CODE;
     }
-    
+
     if (compareString(dataBuffer, "Log File Path") == STR_EQ)
     {
         return CFG_LOG_FILE_NAME_CODE;
     }
-    
+
     return CFG_CORRUPT_PROMT_ERR;
 }
 
-
 ConfigDataCodes getLogToCode(char *logToStr)
 {
-    // initialize function/variables
-    
-    // create temporary string
-    // function: getStringLength, malloc
     int strLen = getStringLength(logToStr);
-    char *tempStr = (char *) malloc(strLen + 1);
-    
-    // set default to log to monitor
+    char *tempStr = (char *)malloc(strLen + 1);
     int returnVal = LOGTO_MONITOR_CODE;
-    
-    // set temp string to lower case
-    // function: setStrToLowerCase
+
     setStrToLowerCase(tempStr, logToStr);
-    
-    // Check for BOTH
-    // function: compareString
+
     if (compareString(tempStr, "both") == STR_EQ)
     {
-        // set return calue to both code
         returnVal = LOGTO_BOTH_CODE;
     }
-    
-    // Check for FILE
-    // function: compareString
-    if(compareString(tempStr, "file") == STR_EQ)
+
+    if (compareString(tempStr, "file") == STR_EQ)
     {
-        // set return value to file code
         returnVal = LOGTO_FILE_CODE;
     }
-    
-    // Free temp string memory
-    // function: free
+
     free(tempStr);
-    
-    // return found code
     return returnVal;
 }
 
-
 Boolean valueInRange(int lineCode, int intVal, double doubleVal, char *stringVal)
 {
-    // initialize function/ variables
     Boolean result = True;
     char *tempStr;
     int strLen;
-    
-    // use line code to identify prompt line
-    switch(lineCode)
+
+    switch (lineCode)
     {
-        // for version code
-        case CFG_VERSION_CODE:
-            // check if limits of version code are exceeded
-            if(doubleVal < 0.00 || doubleVal > 10.0)
-            {
-                // set Boolean result to false
-                result = False;
-            }
-            break;
-            
-        // for cpu scheduling code
-        case CFG_CPU_SCHED_CODE:
-            // create temporary string and set to lower case
-            // function: getStringLength, malloc, setStrToLowerCase
-            strLen = getStringLength(stringVal);
-            tempStr = (char *) malloc(strLen + 1);
-            setStrToLowerCase(tempStr, stringVal);
-            
-            // check for not finding one of the scheduling strings
-            // function: compareString
-            if(compareString(tempStr, "fcfs-n") != STR_EQ
-               && compareString(tempStr, "sjf-n") != STR_EQ
-               && compareString(tempStr, "srtf-p") != STR_EQ
-               && compareString(tempStr, "fcfs-p") != STR_EQ
-               && compareString(tempStr, "rr-p") != STR_EQ)
-            {
-                // set boolean result to false
-                result = False;
-            }
-            
-            // free temp string memory
-            // function: free
-            free(tempStr);
-            
-            break;
-            
-        // for quantum cycles
-        case CFG_QUANT_CYCLES_CODE:
-            // check for quantum cycles limits exceeded
-            if (intVal < 0 || intVal > 100)
-            {
-                // set boolean result to false
-                result = False;
-            }
-            break;
-            
-        // for memory avaible
-        case CFG_MEM_AVAILABLE_CODE:
-            // check for available memory limits exceeded
-            if (intVal < 1024 || intVal > 102400)
-            {
-                // set Boolean result to false
-                result = False;
-            }
-            break;
-            
-        // check for process cycles
-        case CFG_PROC_CYCLES_CODE:
-            // check for process cycles limits exceeded
-            if (intVal < 1 || intVal > 100)
-            {
-                // set boolean result to False
-                result = False;
-            }
-            break;
-            
-            // check for I/O cycles
-        case CFG_IO_CYCLES_CODE:
-            // check for I/O cycles limits exceeded
-            if (intVal < 1 || intVal > 1000)
-            {
-                // set boolean result to False
-                result = False;
-            }
-            break;
-            
-            // check for Log to operation
-        case CFG_LOG_TO_CODE:
-            // create temporary string and set to lower set to lower case
-            // function: getStringLength, malloc, setStrToLowerCase
-            strLen = getStringLength(stringVal);
-            tempStr = (char *) malloc(strLen + 1);
-            setStrToLowerCase(tempStr, stringVal);
-            
-            // check for not finding one of the log to strings
-            // function: compareString
-            if (compareString(tempStr, "both") != STR_EQ
-                && compareString(tempStr, "monitor") != STR_EQ
-                && compareString(tempStr, "file") != STR_EQ)
-            {
-                // set Boolean result to false
-                result = False;
-            }
-            
-            // free temp string memory
-            // function: free
-            free(tempStr);
-            break;
+    case CFG_VERSION_CODE:
+        if (doubleVal < 0.00 || doubleVal > 10.0)
+        {
+            result = False;
+        }
+        break;
+
+    case CFG_CPU_SCHED_CODE:
+        strLen = getStringLength(stringVal);
+        tempStr = (char *)malloc(strLen + 1);
+        setStrToLowerCase(tempStr, stringVal);
+
+        if (compareString(tempStr, "fcfs-n") != STR_EQ && compareString(tempStr, "sjf-n") != STR_EQ && compareString(tempStr, "srtf-p") != STR_EQ && compareString(tempStr, "fcfs-p") != STR_EQ && compareString(tempStr, "rr-p") != STR_EQ)
+        {
+            result = False;
+        }
+
+        free(tempStr);
+        break;
+
+    case CFG_QUANT_CYCLES_CODE:
+        if (intVal < 0 || intVal > 100)
+        {
+            result = False;
+        }
+
+        break;
+
+    case CFG_MEM_AVAILABLE_CODE:
+        if (intVal < 1024 || intVal > 102400)
+        {
+            result = False;
+        }
+
+        break;
+
+    case CFG_PROC_CYCLES_CODE:
+        if (intVal < 1 || intVal > 100)
+        {
+            result = False;
+        }
+
+        break;
+
+    case CFG_IO_CYCLES_CODE:
+        if (intVal < 1 || intVal > 1000)
+        {
+            result = False;
+        }
+
+        break;
+
+    case CFG_LOG_TO_CODE:
+        strLen = getStringLength(stringVal);
+        tempStr = (char *)malloc(strLen + 1);
+        setStrToLowerCase(tempStr, stringVal);
+
+        if (compareString(tempStr, "both") != STR_EQ && compareString(tempStr, "monitor") != STR_EQ && compareString(tempStr, "file") != STR_EQ)
+        {
+            result = False;
+        }
+
+        free(tempStr);
+        break;
     }
-    
-    // return result of limits analysis
+
     return result;
 }

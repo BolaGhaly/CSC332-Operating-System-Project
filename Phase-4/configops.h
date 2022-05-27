@@ -1,7 +1,6 @@
 #ifndef configops_h
 #define configops_h
 
-// header files
 #include "StringUtils.h"
 
 typedef enum
@@ -33,15 +32,13 @@ typedef enum
     LOGTO_BOTH_CODE
 } ConfigDataCodes;
 
+ConfigDataType *clearConfigData(ConfigDataType *configData);
+void configCodeToString(int code, char *outString);
+void displayConfigData(ConfigDataType *configData);
+Boolean getConfigData(char *fileName, ConfigDataType **configData, char *endStateMsg);
+ConfigDataCodes getCpuSchedCode(char *codeStr);
+ConfigDataCodes getLogToCode(char *logToStr);
+Boolean valueInRange(int lineCode, int intVal, double doubleVal, char *stringVal);
+int getDataLineCode(char *dataBuffer);
 
-// function prototypes
-ConfigDataType *clearConfigData (ConfigDataType *configData);
-void configCodeToString (int code, char *outString);
-void displayConfigData (ConfigDataType *configData);
-Boolean getConfigData (char *fileName, ConfigDataType **configData, char *endStateMsg);
-ConfigDataCodes getCpuSchedCode (char *codeStr);
-ConfigDataCodes getLogToCode (char *logToStr);
-Boolean valueInRange (int lineCode, int intVal, double doubleVal, char *stringVal);
-int getDataLineCode (char *dataBuffer);
-
-#endif /* configops_h */
+#endif
