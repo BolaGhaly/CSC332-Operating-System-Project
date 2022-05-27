@@ -1,7 +1,5 @@
-// header files
 #include "StringUtils.h"
 
-// constant declaration
 const char NULL_CHAR = '\0';
 const char SPACE = ' ';
 const char COLON = ':';
@@ -18,16 +16,14 @@ const int SUBSTRING_NOT_FOUND = -1001;
 const Boolean IGNORE_LEADING_WS = True;
 const Boolean ACCEPT_LEADING_WS = False;
 
-
 int getStringLength (char *str)
 {
     int index = 0;
     
     while (str[index] != NULL_CHAR)
     {
-        // update index
         index++;
-    } // end of the while loop
+    }
     
     return index;
 }
@@ -40,9 +36,8 @@ void copyString (char *destination, char *source)
         destination[index] = source[index];
         index++;
         destination[index] = NULL_CHAR;
-    } // end of while loop
+    }
 }
-
 
 void concatenateString (char *destination, char *source)
 {
@@ -52,14 +47,12 @@ void concatenateString (char *destination, char *source)
     while (destIndex < MAX_STR_LEN && source[sourceIndex] != NULL_CHAR) {
         destination[destIndex] = source[sourceIndex];
         
-        // increment indices
         sourceIndex++;
         destIndex++;
         
         destination[destIndex] = NULL_CHAR;
-    } // end of while loop
+    }
 }
-
 
 int compareString (char *oneStr, char *otherStr)
 {
@@ -69,7 +62,6 @@ int compareString (char *oneStr, char *otherStr)
     while (index < MAX_STR_LEN && oneStr[index] != NULL_CHAR && otherStr[index] != NULL_CHAR) {
         difference = oneStr[index] - otherStr[index];
         
-        // if they're not equal, then return non-zero difference
         if (difference != 0) {
             return difference;
         }
@@ -79,7 +71,6 @@ int compareString (char *oneStr, char *otherStr)
     
     return getStringLength(oneStr) - getStringLength(otherStr);
 }
-
 
 void getSubString (char *destStr, char *sourceStr, int startIndex, int endIndex)
 {
@@ -96,24 +87,21 @@ void getSubString (char *destStr, char *sourceStr, int startIndex, int endIndex)
        while (destIndex < MAX_STR_LEN && sourceIndex <= endIndex) {
            destStr[destIndex] = tempSourceStr[sourceIndex];
            
-           // increment indices
            sourceIndex++;
            destIndex++;
            
            destStr[destIndex] = NULL_CHAR;
-       } //end of while loop
+       }
        
        free(tempSourceStr);
-   } // end of if statement
+   }
    else {
        destStr[0] = NULL_CHAR;
-   } // end of else statement
+   }
 }
-
 
 int findSubString (char *testStr, char *searchSubStr)
 {
-    // Initialize functions/variables
     int testStrLen = getStringLength(testStr);
     int masterIndex = 0;
     int searchIndex;
@@ -124,10 +112,8 @@ int findSubString (char *testStr, char *searchSubStr)
         internalIndex = masterIndex;
         searchIndex = 0;
         
-        // loop to the end of test string
         while (internalIndex <= testStrLen  && testStr[internalIndex] == searchSubStr[searchIndex])
         {
-            // increment test string, substring indices
             internalIndex++;
             searchIndex++;
             
@@ -135,16 +121,13 @@ int findSubString (char *testStr, char *searchSubStr)
             {
                 return masterIndex;
             }
-        } // end of the nested while loop
+        }
         
-        // incerement current beginning location index
         masterIndex++;
-    } // end of the main while loop
+    }
     
-    // assume the test has failed at this point, return SUBSTRING_NOT_FOUND
     return SUBSTRING_NOT_FOUND;
 }
-
 
 void setStrToLowerCase (char *destStr, char *sourceStr)
 {
@@ -158,7 +141,6 @@ void setStrToLowerCase (char *destStr, char *sourceStr)
     while (index < MAX_STR_LEN && tempStr[index] != NULL_CHAR) {
         destStr[index] = setCharToLowerCase(tempStr[index]);
         
-        // increment index
         index++;
         
         destStr[index] = NULL_CHAR;
@@ -175,13 +157,6 @@ char setCharToLowerCase (char inputChar) {
     return inputChar;
 }
 
-
-
-
-
-
-
-
 int getLineTo (FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolean omitLeadingWhiteSpace, Boolean stopAtNonPrintable)
 {
     int charAsInt;
@@ -197,27 +172,26 @@ int getLineTo (FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boole
            && charIndex < bufferSize
            && charAsInt <= (int) SPACE) {
         charAsInt = fgetc(filePtr);
-    } // end of the while loop
+    }
     
     if (stopAtNonPrintable == True && charAsInt < (int) SPACE)
     {
         nonPrintableFound = True;
-    } // end of the if statement
+    }
     
     while (charAsInt != (int) stopChar && nonPrintableFound == False && bufferSizeAvailable == True)
     {
         if (isEndOfFile(filePtr) == True)
         {
             return INCOMPLETE_FILE_ERR;
-        } // end of the if statement
+        }
         
         if (charAsInt >= (int) SPACE)
         {
             buffer[charIndex] = (char) charAsInt;
             
-            // increment index
             charIndex++;
-        } // end of the if statement
+        }
         
         buffer[charIndex] = NULL_CHAR;
         
@@ -228,9 +202,8 @@ int getLineTo (FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boole
             if (stopAtNonPrintable == True && charAsInt < (int) SPACE)
             {
                 nonPrintableFound = True;
-            } // end of the nested if statement
-        } // end of the if statement
-        
+            }
+        }
         else
         {
             bufferSizeAvailable = False;
@@ -238,7 +211,6 @@ int getLineTo (FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boole
         }
     }
     
-    // return operation status
     return statusReturn;
 }
 
@@ -251,4 +223,3 @@ Boolean isEndOfFile (FILE *filePtr)
     
     return False;
 }
-

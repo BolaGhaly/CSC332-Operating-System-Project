@@ -1,13 +1,13 @@
 #ifndef metadataops_h
 #define metadataops_h
 
-// header files
 #include "StringUtils.h"
 #include <stdio.h>
 
 extern const int BAD_ARG_VAL;
 
-typedef enum OpCodeMessages {
+typedef enum OpCodeMessages
+{
     MD_FILE_ACCESS_ERR = 3,
     MD_CORRUPT_DESCRIPTOR_ERR,
     OPCMD_ACCESS_ERR,
@@ -18,20 +18,18 @@ typedef enum OpCodeMessages {
     LAST_OPCMD_FOUND_MSG
 } OpCodeMessages;
 
-// Function prototypes
-OpCodeType *addNode (OpCodeType *localPtr, OpCodeType *newNode);
-OpCodeType *clearMetaDataList (OpCodeType *localPtr);
-void displayMetaData (OpCodeType *localPtr);
+OpCodeType *addNode(OpCodeType *localPtr, OpCodeType *newNode);
+OpCodeType *clearMetaDataList(OpCodeType *localPtr);
+void displayMetaData(OpCodeType *localPtr);
 int getCommand(char *cmd, char *inputStr, int index);
 int getOpCommand(FILE *filePtr, OpCodeType *inData);
 int getNumberArg(int *number, char *inputStr, int index);
-int getStringArg (char *strArg, char *inputStr, int index);
-int updateEndCount (int count, char *opString);
-int updateStartCount (int count, char *opString);
-Boolean isDigit (char testChar);
-Boolean verifyFirstStringArg (char *strArg);
-Boolean verifyValidCommand (char *testCmd);
-Boolean getMetaData (char *fileName, OpCodeType **opCodeDataHead, char *endStateMsg);
+int getStringArg(char *strArg, char *inputStr, int index);
+int updateEndCount(int count, char *opString);
+int updateStartCount(int count, char *opString);
+Boolean isDigit(char testChar);
+Boolean verifyFirstStringArg(char *strArg);
+Boolean verifyValidCommand(char *testCmd);
+Boolean getMetaData(char *fileName, OpCodeType **opCodeDataHead, char *endStateMsg);
 
-
-#endif /* metadataops_h */
+#endif
