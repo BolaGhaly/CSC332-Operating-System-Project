@@ -22,37 +22,23 @@ void enqueue(ready_queue_t *ready_q, process_t *proc, ConfigDataType *configPtr,
     if (configPtr->cpuSchedCode == CPU_SCHED_FCFS_N_CODE)
     {
         if (init)
-        {
             rq_push_back(ready_q, proc);
-        }
         else
-        {
             rq_push_front(ready_q, proc);
-        }
     }
     else if (configPtr->cpuSchedCode == CPU_SCHED_SJF_N_CODE)
     {
         if (init)
-        {
             rq_insert_cmp_by_pid(ready_q, proc);
-        }
         else
-        {
             rq_push_front(ready_q, proc);
-        }
     }
     else if (configPtr->cpuSchedCode == CPU_SCHED_FCFS_P_CODE)
-    {
         rq_insert_cmp_by_pid(ready_q, proc);
-    }
     else if (configPtr->cpuSchedCode == CPU_SCHED_SRTF_P_CODE)
-    {
         rq_insert_cmp_by_remaining_time(ready_q, proc);
-    }
     else if (configPtr->cpuSchedCode == CPU_SCHED_RR_P_CODE)
-    {
         rq_push_back(ready_q, proc);
-    }
 }
 
 void process_end(process_t *proc, ConfigDataType *config)
@@ -198,9 +184,7 @@ Boolean runProcess(process_t *current_process, sim_t *sim, ConfigDataType *confi
         }
 
         if (exec->time == 0)
-        {
             current_process->cur_exe++;
-        }
 
         if (!interrupted && quantum == 0 && exec->time > 0)
         {
@@ -216,9 +200,7 @@ Boolean runProcess(process_t *current_process, sim_t *sim, ConfigDataType *confi
         }
 
         if (interrupted)
-        {
             print_interrupt(sim, config);
-        }
     }
     else if (exec->command == DEVIN || exec->command == DEVOUT)
     {
@@ -248,9 +230,7 @@ Boolean runProcess(process_t *current_process, sim_t *sim, ConfigDataType *confi
         args->config = config;
 
         if (config->cpuSchedCode == CPU_SCHED_FCFS_N_CODE || config->cpuSchedCode == CPU_SCHED_SJF_N_CODE)
-        {
             block_for_io((void *)args);
-        }
         else
         {
             pthread_create(&pid, NULL, block_for_io, (void *)args);
@@ -275,14 +255,11 @@ Boolean runProcess(process_t *current_process, sim_t *sim, ConfigDataType *confi
         current_process->cur_exe++;
     }
     else
-    {
         current_process->cur_exe++;
-    }
 
     pthread_mutex_lock(&sim->mutex);
     sim->cur_proc = current_process;
     pthread_mutex_unlock(&sim->mutex);
-
     return True;
 }
 
@@ -307,13 +284,9 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
     }
 
     printf("Simulator Run\n-------------\n\n");
-
     runTimer(0);
-
     char value[BUFSIZ];
-
     accessTimer(ZERO_TIMER, value);
-
     output_with_time("OS: Simulator start", configPtr);
 
     process_t *proc;
@@ -384,46 +357,26 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
                     else if (compareString(app_ptr->command, "dev") == 0)
                     {
                         if (compareString(app_ptr->inOutArg, "in") == 0)
-                        {
                             exec->command = DEVIN;
-                        }
                         else if (compareString(app_ptr->inOutArg, "out") == 0)
-                        {
                             exec->command = DEVOUT;
-                        }
 
                         if (compareString(app_ptr->strArg1, "monitor") == 0)
-                        {
                             exec->strArgs1 = MONITOR;
-                        }
                         else if (compareString(app_ptr->strArg1, "sound signal") == 0)
-                        {
                             exec->strArgs1 = SOUND_SIGNAL;
-                        }
                         else if (compareString(app_ptr->strArg1, "ethernet") == 0)
-                        {
                             exec->strArgs1 = ETHERNET;
-                        }
                         else if (compareString(app_ptr->strArg1, "hard drive") == 0)
-                        {
                             exec->strArgs1 = HDD;
-                        }
                         else if (compareString(app_ptr->strArg1, "keyboard") == 0)
-                        {
                             exec->strArgs1 = KEYBOARD;
-                        }
                         else if (compareString(app_ptr->strArg1, "serial") == 0)
-                        {
                             exec->strArgs1 = SERIAL;
-                        }
                         else if (compareString(app_ptr->strArg1, "video signal") == 0)
-                        {
                             exec->strArgs1 = VIDEO_SIGNAL;
-                        }
                         else if (compareString(app_ptr->strArg1, "usb") == 0)
-                        {
                             exec->strArgs1 = USB;
-                        }
 
                         exec->time = exec->intArg2 * configPtr->ioCycleRate;
                     }
@@ -432,13 +385,9 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
                         exec->command = MEM;
 
                         if (compareString(app_ptr->strArg1, "access") == 0)
-                        {
                             exec->strArgs1 = ACCESS;
-                        }
                         else if (compareString(app_ptr->strArg1, "allocate") == 0)
-                        {
                             exec->strArgs1 = ALLOCATE;
-                        }
 
                         exec->time = 0;
                     }
@@ -452,9 +401,7 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
             }
         }
         else if (compareString(ptr->command, "sys") != 0)
-        {
             range++;
-        }
 
         ptr = ptr->nextNode;
     }
@@ -471,7 +418,6 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
     while (1)
     {
         pthread_mutex_lock(&sim.mutex);
-
         sim.interrupt = False;
 
         if (sim.num_ended == process_cnt)
@@ -604,9 +550,7 @@ void initial_process(int non, ConfigDataType *configPtr)
 void memset_usr(char *ptr, int count, char value)
 {
     for (int index = 0; index < count; ++index)
-    {
         ptr[index] = value;
-    }
 }
 
 int process_cmp_by_remaining_time(process_t *pro1, process_t *pro2)
@@ -654,9 +598,7 @@ void rq_push_back(ready_queue_t *ready_q, process_t *proc)
         ready_q->tail = proc;
     }
     else
-    {
         ready_q->head = ready_q->tail = proc;
-    }
 
     ++ready_q->size;
 }
@@ -668,13 +610,9 @@ void rq_push_front(ready_queue_t *ready_q, process_t *proc)
     proc->next = ready_q->head;
 
     if (ready_q->head)
-    {
         ready_q->head = proc;
-    }
     else
-    {
         ready_q->head = ready_q->tail = proc;
-    }
 
     ++ready_q->size;
 }
@@ -684,13 +622,9 @@ void rq_insert_cmp_by_remaining_time(ready_queue_t *ready_q, process_t *proc)
     assert(proc);
 
     if (ready_q->head == NULL || process_cmp_by_remaining_time(proc, ready_q->head) < 0)
-    {
         rq_push_front(ready_q, proc);
-    }
     else if (process_cmp_by_remaining_time(ready_q->tail, proc) <= 0)
-    {
         rq_push_back(ready_q, proc);
-    }
     else
     {
         process_t *proc_node = ready_q->head;
@@ -716,13 +650,9 @@ void rq_insert_cmp_by_pid(ready_queue_t *ready_q, process_t *proc)
     assert(proc);
 
     if (ready_q->head == NULL || process_cmp_by_pid(proc, ready_q->head) < 0)
-    {
         rq_push_front(ready_q, proc);
-    }
     else if (process_cmp_by_pid(ready_q->tail, proc) <= 0)
-    {
         rq_push_back(ready_q, proc);
-    }
     else
     {
         process_t *proc_node = ready_q->head;
@@ -750,12 +680,9 @@ process_t *rq_pop_front(ready_queue_t *ready_q)
     ready_q->head = head->next;
 
     if (ready_q->head == NULL)
-    {
         ready_q->tail = NULL;
-    }
 
     --ready_q->size;
-
     return head;
 }
 
