@@ -1,7 +1,6 @@
 #ifndef metadataops_h
 #define metadataops_h
 
-// header files
 #include "StringUtils.h"
 #include <stdio.h>
 
@@ -19,7 +18,6 @@ typedef enum OpCodeMessages
 
 extern const int BAD_ARG_VAL;
 
-// Function prototypes
 OpCodeType *addNode(OpCodeType *localPtr, OpCodeType *newNode);
 int calcOptime(ConfigDataType *configPtr, OpCodeType *opCode);
 OpCodeType *clearMetaDataList(OpCodeType *localPtr);
@@ -37,4 +35,4 @@ Boolean verifyValidCommand(char *testCmd);
 int updateEndCount(int count, char *opString);
 int updateStartCount(int count, char *opString);
 
-#endif /* metadataops_h */
+#endif

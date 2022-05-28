@@ -35,11 +35,8 @@ int compareString(const char *oneStr, const char *otherStr)
 void concatenateString(char *destStr, const char *sourceStr)
 {
     int destIndex = getStringLength(destStr);
-
     int sourceStrLen = getStringLength(sourceStr);
-
     char *tempStr;
-
     int sourceIndex = 0;
 
     tempStr = (char *)malloc(sizeof(sourceStrLen + 1));
@@ -48,10 +45,8 @@ void concatenateString(char *destStr, const char *sourceStr)
     while (tempStr[sourceIndex] != NULL_CHAR && destIndex < MAX_STR_LEN)
     {
         destStr[destIndex] = tempStr[sourceIndex];
-
         destIndex++;
         sourceIndex++;
-
         destStr[destIndex] = NULL_CHAR;
     }
 
@@ -67,9 +62,7 @@ void copyString(char *destStr, const char *sourceStr)
         while (sourceStr[index] != NULL_CHAR && index < MAX_STR_LEN)
         {
             destStr[index] = sourceStr[index];
-
             index++;
-
             destStr[index] = NULL_CHAR;
         }
     }
@@ -92,9 +85,7 @@ int findSubString(const char *testStr, const char *searchSubStr)
             searchIndex++;
 
             if (searchSubStr[searchIndex] == NULL_CHAR)
-            {
                 return masterIndex;
-            }
         }
 
         masterIndex++;
@@ -106,29 +97,20 @@ int findSubString(const char *testStr, const char *searchSubStr)
 bool getStringConstrained(FILE *inStream, bool clearLeadingNonPrintable, bool clearLeadingSpace, bool stopAtNonPrintable, char delimiter, char *capturedString)
 {
     int intChar = EOF, index = 0;
-
     capturedString[index] = NULL_CHAR;
-
     intChar = fgetc(inStream);
 
     while (((intChar != EOF) && ((clearLeadingNonPrintable && intChar == (int)SPACE))) || (clearLeadingSpace && intChar == (int)SPACE))
-    {
         intChar = fgetc(inStream);
-    }
 
     if (intChar == EOF)
-    {
         return false;
-    }
 
     while ((intChar != EOF && index < MAX_STR_LEN - 1) && ((stopAtNonPrintable && intChar >= (int)SPACE) || (!stopAtNonPrintable)) && (intChar != (char)delimiter))
     {
         capturedString[index] = (char)intChar;
-
         index++;
-
         capturedString[index] = NULL_CHAR;
-
         intChar = fgetc(inStream);
     }
 
@@ -140,9 +122,7 @@ int getStringLength(const char *teststr)
     int index = 0;
 
     while (index < STD_STR_LEN && teststr[index] != NULL_CHAR)
-    {
         index++;
-    }
 
     return index;
 }
@@ -172,10 +152,8 @@ void getSubString(char *destStr, const char *sourceStr, int startIndex, int endI
         while (sourceIndex <= endIndex)
         {
             destStr[destIndex] = tempStr[sourceIndex];
-
             destIndex++;
             sourceIndex++;
-
             destStr[destIndex] = NULL_CHAR;
         }
 
@@ -195,9 +173,7 @@ void setStrToLowerCase(char *destStr, const char *sourceStr)
     while (tempStr[index] != NULL_CHAR && index < MAX_STR_LEN)
     {
         destStr[index] = toLowerCase(tempStr[index]);
-
         index++;
-
         destStr[index] = NULL_CHAR;
     }
 
@@ -207,9 +183,7 @@ void setStrToLowerCase(char *destStr, const char *sourceStr)
 char toLowerCase(char testChar)
 {
     if (testChar >= 'A' && testChar <= 'Z')
-    {
         testChar = testChar - 'A' + 'a';
-    }
 
     return testChar;
 }
@@ -224,21 +198,15 @@ int getLineTo(FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolea
     charAsInt = fgetc(filePtr);
 
     while (omitLeadingWhiteSpace == True && charAsInt != (int)stopChar && charIndex < bufferSize && charAsInt <= (int)SPACE)
-    {
         charAsInt = fgetc(filePtr);
-    }
 
     if (stopAtNonPrintable == True && charAsInt < (int)SPACE)
-    {
         nonPrintableFound = True;
-    }
 
     while (charAsInt != (int)stopChar && nonPrintableFound == False && bufferSizeAvailable == True)
     {
         if (isEndOfFile(filePtr) == True)
-        {
             return INCOMPLETE_FILE_ERR;
-        }
 
         if (charAsInt >= (int)SPACE)
         {
@@ -253,9 +221,7 @@ int getLineTo(FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolea
             charAsInt = fgetc(filePtr);
 
             if (stopAtNonPrintable == True && charAsInt < (int)SPACE)
-            {
                 nonPrintableFound = True;
-            }
         }
         else
         {
@@ -270,9 +236,7 @@ int getLineTo(FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolea
 Boolean isEndOfFile(FILE *filePtr)
 {
     if (feof(filePtr) != 0)
-    {
         return True;
-    }
 
     return False;
 }

@@ -47,13 +47,9 @@ void displayMetaData(OpCodeType *localPtr)
         printf("/cmd: %s", localPtr->command);
 
         if (compareString(localPtr->command, "dev") == STR_EQ)
-        {
             printf("/io: %s", localPtr->inOutArg);
-        }
         else
-        {
             printf("/io: NA");
-        }
 
         printf("\n\t /arg 1: %s", localPtr->strArg1);
         printf("/arg 2: %d", localPtr->intArg2);
@@ -154,9 +150,7 @@ Boolean getMetaData(char *fileName, OpCodeType **opCodeDataHead, char *endStateM
     }
 
     if (accessResult != NO_ERR)
-    {
         localHeadPtr = clearMetaDataList(localHeadPtr);
-    }
 
     fclose(fileAccessPtr);
     free(newNodePtr);
@@ -190,9 +184,7 @@ int getOpCommand(FILE *filePtr, OpCodeType *inData)
     }
 
     if (verifyValidCommand(cmdBuffer) == False)
-    {
         return CORRUPT_OPCMD_ERR;
-    }
 
     inData->pid = 0;
     inData->inOutArg[0] = NULL_CHAR;
@@ -217,23 +209,17 @@ int getOpCommand(FILE *filePtr, OpCodeType *inData)
     copyString(inData->strArg1, argStrBuffer);
 
     if (verifyFirstStringArg(argStrBuffer) == False)
-    {
         return CORRUPT_OPCMD_ARG_ERR;
-    }
 
     if (compareString(inData->command, "sys") == STR_EQ && compareString(inData->strArg1, "end") == STR_EQ)
-    {
         return LAST_OPCMD_FOUND_MSG;
-    }
 
     if (compareString(inData->command, "app") == STR_EQ && compareString(inData->strArg1, "start") == STR_EQ)
     {
         runningStringIndex = getNumberArg(&numBuffer, strBuffer, runningStringIndex);
 
         if (numBuffer <= BAD_ARG_VAL)
-        {
             arg2FailureFlag = True;
-        }
 
         inData->intArg2 = numBuffer;
     }
@@ -242,9 +228,7 @@ int getOpCommand(FILE *filePtr, OpCodeType *inData)
         runningStringIndex = getNumberArg(&numBuffer, strBuffer, runningStringIndex);
 
         if (numBuffer <= BAD_ARG_VAL)
-        {
             arg2FailureFlag = True;
-        }
 
         inData->intArg2 = numBuffer;
     }
@@ -253,9 +237,7 @@ int getOpCommand(FILE *filePtr, OpCodeType *inData)
         runningStringIndex = getNumberArg(&numBuffer, strBuffer, runningStringIndex);
 
         if (numBuffer <= BAD_ARG_VAL)
-        {
             arg2FailureFlag = True;
-        }
 
         inData->intArg2 = numBuffer;
     }
@@ -264,25 +246,19 @@ int getOpCommand(FILE *filePtr, OpCodeType *inData)
         runningStringIndex = getNumberArg(&numBuffer, strBuffer, runningStringIndex);
 
         if (numBuffer <= BAD_ARG_VAL)
-        {
             arg2FailureFlag = True;
-        }
 
         inData->intArg2 = numBuffer;
         runningStringIndex = getNumberArg(&numBuffer, strBuffer, runningStringIndex);
 
         if (numBuffer <= BAD_ARG_VAL)
-        {
             arg3FailureFlag = True;
-        }
 
         inData->intArg3 = numBuffer;
     }
 
     if (arg2FailureFlag == True || arg3FailureFlag == True)
-    {
         return CORRUPT_OPCMD_ARG_ERR;
-    }
 
     return COMPLETE_OPCMD_FOUND_MSG;
 }
@@ -294,9 +270,7 @@ int getNumberArg(int *number, char *inputStr, int index)
     int multiplier = 1;
 
     while (inputStr[index] <= SPACE || inputStr[index] == COMMA)
-    {
         index++;
-    }
 
     while (isDigit(inputStr[index]) == True && inputStr[index] != NULL_CHAR)
     {
@@ -307,9 +281,7 @@ int getNumberArg(int *number, char *inputStr, int index)
     }
 
     if (foundDigit == False)
-    {
         *number = BAD_ARG_VAL;
-    }
 
     return index;
 }
@@ -319,16 +291,13 @@ int getStringArg(char *strArg, char *inputStr, int index)
     int localIndex = 0;
 
     while (inputStr[index] <= SPACE || inputStr[index] == COMMA)
-    {
         index++;
-    }
 
     while (inputStr[index] != COMMA && inputStr[index] != NULL_CHAR)
     {
         strArg[localIndex] = inputStr[index];
         index++;
         localIndex++;
-
         strArg[localIndex] = NULL_CHAR;
     }
 
@@ -338,9 +307,7 @@ int getStringArg(char *strArg, char *inputStr, int index)
 Boolean isDigit(char testChar)
 {
     if (testChar >= '0' && testChar <= '9')
-    {
         return True;
-    }
 
     return False;
 }
@@ -348,9 +315,7 @@ Boolean isDigit(char testChar)
 int updateEndCount(int count, char *opString)
 {
     if (compareString(opString, "end") == STR_EQ)
-    {
         return count + 1;
-    }
 
     return count;
 }
@@ -358,9 +323,7 @@ int updateEndCount(int count, char *opString)
 int updateStartCount(int count, char *opString)
 {
     if (compareString(opString, "start") == STR_EQ)
-    {
         return count + 1;
-    }
 
     return count;
 }
@@ -368,9 +331,7 @@ int updateStartCount(int count, char *opString)
 Boolean verifyFirstStringArg(char *strArg)
 {
     if (compareString(strArg, "access") == STR_EQ || compareString(strArg, "allocate") == STR_EQ || compareString(strArg, "end") == STR_EQ || compareString(strArg, "ethernet") == STR_EQ || compareString(strArg, "hard drive") == STR_EQ || compareString(strArg, "keyboard") == STR_EQ || compareString(strArg, "monitor") == STR_EQ || compareString(strArg, "printer") == STR_EQ || compareString(strArg, "process") == STR_EQ || compareString(strArg, "serial") == STR_EQ || compareString(strArg, "sound signal") == STR_EQ || compareString(strArg, "start") == STR_EQ || compareString(strArg, "usb") == STR_EQ || compareString(strArg, "video signal") == STR_EQ)
-    {
         return True;
-    }
 
     return False;
 }
@@ -378,9 +339,7 @@ Boolean verifyFirstStringArg(char *strArg)
 Boolean verifyValidCommand(char *testCmd)
 {
     if (compareString(testCmd, "sys") == STR_EQ || compareString(testCmd, "app") == STR_EQ || compareString(testCmd, "cpu") == STR_EQ || compareString(testCmd, "mem") == STR_EQ || compareString(testCmd, "dev") == STR_EQ)
-    {
         return True;
-    }
 
     return False;
 }

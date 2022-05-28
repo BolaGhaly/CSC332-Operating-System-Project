@@ -75,9 +75,7 @@ int main(int argc, char **argv)
         if (getStringLength(fileName) > 0 && getConfigData(fileName, &configDataPtr, errorMessage) == True)
         {
             if (configDisplayFlag == True)
-            {
                 displayConfigData(configDataPtr);
-            }
         }
         else
         {
@@ -91,19 +89,13 @@ int main(int argc, char **argv)
         if (getMetaData(configDataPtr->metaDataFileName, &metaDataPtr, errorMessage) == True)
         {
             if (mdDisplayFlag == True)
-            {
                 displayMetaData(metaDataPtr);
-            }
 
             if (runSimFlag == True)
-            {
                 runSim(configDataPtr, metaDataPtr);
-            }
         }
         else
-        {
             printf("\nMetadata Upload Error: %s, program aborted\n", errorMessage);
-        }
     }
 
     configDataPtr = clearConfigData(configDataPtr);
