@@ -23,9 +23,7 @@ int getStringLength(char *str)
     int index = 0;
 
     while (str[index] != NULL_CHAR)
-    {
         index++;
-    }
 
     return index;
 }
@@ -50,10 +48,8 @@ void concatenateString(char *destination, char *source)
     while (destIndex < MAX_STR_LEN && source[sourceIndex] != NULL_CHAR)
     {
         destination[destIndex] = source[sourceIndex];
-
         sourceIndex++;
         destIndex++;
-
         destination[destIndex] = NULL_CHAR;
     }
 }
@@ -68,9 +64,7 @@ int compareString(char *oneStr, char *otherStr)
         difference = oneStr[index] - otherStr[index];
 
         if (difference != 0)
-        {
             return difference;
-        }
 
         index++;
     }
@@ -93,19 +87,15 @@ void getSubString(char *destStr, char *sourceStr, int startIndex, int endIndex)
         while (destIndex < MAX_STR_LEN && sourceIndex <= endIndex)
         {
             destStr[destIndex] = tempSourceStr[sourceIndex];
-
             sourceIndex++;
             destIndex++;
-
             destStr[destIndex] = NULL_CHAR;
         }
 
         free(tempSourceStr);
     }
     else
-    {
         destStr[0] = NULL_CHAR;
-    }
 }
 
 int findSubString(char *testStr, char *searchSubStr)
@@ -126,9 +116,7 @@ int findSubString(char *testStr, char *searchSubStr)
             searchIndex++;
 
             if (searchSubStr[searchIndex] == NULL_CHAR)
-            {
                 return masterIndex;
-            }
         }
 
         masterIndex++;
@@ -148,9 +136,7 @@ void setStrToLowerCase(char *destStr, char *sourceStr)
     while (index < MAX_STR_LEN && tempStr[index] != NULL_CHAR)
     {
         destStr[index] = setCharToLowerCase(tempStr[index]);
-
         index++;
-
         destStr[index] = NULL_CHAR;
     }
 
@@ -160,9 +146,7 @@ void setStrToLowerCase(char *destStr, char *sourceStr)
 char setCharToLowerCase(char inputChar)
 {
     if (inputChar >= 'A' && inputChar <= 'Z')
-    {
         inputChar = inputChar - 'A' + 'a';
-    }
 
     return inputChar;
 }
@@ -178,26 +162,19 @@ int getLineTo(FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolea
     charAsInt = fgetc(filePtr);
 
     while (omitLeadingWhiteSpace == True && charAsInt != (int)stopChar && charIndex < bufferSize && charAsInt <= (int)SPACE)
-    {
         charAsInt = fgetc(filePtr);
-    }
 
     if (stopAtNonPrintable == True && charAsInt < (int)SPACE)
-    {
         nonPrintableFound = True;
-    }
 
     while (charAsInt != (int)stopChar && nonPrintableFound == False && bufferSizeAvailable == True)
     {
         if (isEndOfFile(filePtr) == True)
-        {
             return INCOMPLETE_FILE_ERR;
-        }
 
         if (charAsInt >= (int)SPACE)
         {
             buffer[charIndex] = (char)charAsInt;
-
             charIndex++;
         }
 
@@ -208,9 +185,7 @@ int getLineTo(FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolea
             charAsInt = fgetc(filePtr);
 
             if (stopAtNonPrintable == True && charAsInt < (int)SPACE)
-            {
                 nonPrintableFound = True;
-            }
         }
         else
         {
@@ -225,9 +200,7 @@ int getLineTo(FILE *filePtr, int bufferSize, char stopChar, char *buffer, Boolea
 Boolean isEndOfFile(FILE *filePtr)
 {
     if (feof(filePtr) != 0)
-    {
         return True;
-    }
 
     return False;
 }
@@ -250,9 +223,7 @@ void output(char *message, ConfigDataType *configPtr)
     }
 
     if (configPtr->logToCode == LOGTO_MONITOR_CODE)
-    {
         printf("%s\n", message);
-    }
 }
 
 void output_with_time(char *message, ConfigDataType *configPtr)

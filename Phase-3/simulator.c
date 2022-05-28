@@ -24,25 +24,21 @@ void timer(double millisecond)
 
     pthread_create(&pid, NULL, msleep, (void *)ptr);
     pthread_join(pid, NULL);
-
     free(ptr);
 }
 
 Boolean mem_alloca_func(memory_t **mem_list, ConfigDataType *config, int base, int offset, int pid)
 {
     if (base + offset > config->memAvailable)
-    {
         return False;
-    }
 
     memory_t *mem = *mem_list;
 
     while (mem)
     {
         if (!((mem->base < base && mem->base + mem->offset < base + offset) || (base < mem->base && base + offset < mem->base + mem->offset)))
-        {
             return False;
-        }
+        
         mem = mem->next;
     }
 
@@ -61,9 +57,8 @@ Boolean mem_access_func(memory_t *mem_list, int base, int offset, int pid)
     while (mem)
     {
         if (mem->base <= base && base + offset <= mem->base + mem->offset)
-        {
             return pid == mem->pid;
-        }
+        
         mem = mem->next;
     }
 
@@ -91,7 +86,6 @@ void runProcess(process_t *current_process, memory_t **mem_list, ConfigDataType 
         {
         case APP:
             break;
-
         case DEVIN:
         {
             sprintf(value, "Process: %d, %s input operation start", current_process->pid, exec->origin->strArg1);
@@ -101,7 +95,6 @@ void runProcess(process_t *current_process, memory_t **mem_list, ConfigDataType 
             output_with_time(value, config);
             break;
         }
-
         case DEVOUT:
         {
             sprintf(value, "Process: %d, %s output operation start", current_process->pid, exec->origin->strArg1);
@@ -111,7 +104,6 @@ void runProcess(process_t *current_process, memory_t **mem_list, ConfigDataType 
             output_with_time(value, config);
             break;
         }
-
         case CPU:
         {
             sprintf(value, "Process: %d, cpu process operation start", current_process->pid);
@@ -121,7 +113,6 @@ void runProcess(process_t *current_process, memory_t **mem_list, ConfigDataType 
             output_with_time(value, config);
             break;
         }
-
         case MEM:
         {
             if (exec->strArgs1 == ALLOCATE)
@@ -145,9 +136,7 @@ void runProcess(process_t *current_process, memory_t **mem_list, ConfigDataType 
                 output_with_time(value, config);
                 result = mem_access_func(*mem_list, exec->intArg2, exec->intArg3, current_process->pid);
                 if (result)
-                {
                     sprintf(value, "Process: %d, successful mem access request", current_process->pid);
-                }
                 else
                 {
                     sprintf(value, "Process: %d, failed mem access request", current_process->pid);
@@ -157,7 +146,6 @@ void runProcess(process_t *current_process, memory_t **mem_list, ConfigDataType 
                 break;
             }
         }
-
         case SYS:
             break;
         }
@@ -193,9 +181,7 @@ void initial_process(int n, ConfigDataType *configPtr)
 void memset_usr(char *ptr, int count, char value)
 {
     for (int i = 0; i < count; ++i)
-    {
         ptr[i] = value;
-    }
 }
 
 process_t *schedule(process_t **process_list, ConfigDataType *configPtr)
@@ -341,46 +327,26 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
                     else if (compareString(app_ptr->command, "dev") == 0)
                     {
                         if (compareString(app_ptr->inOutArg, "in") == 0)
-                        {
                             exec->command = DEVIN;
-                        }
                         else if (compareString(app_ptr->inOutArg, "out") == 0)
-                        {
                             exec->command = DEVOUT;
-                        }
 
                         if (compareString(app_ptr->strArg1, "monitor") == 0)
-                        {
                             exec->strArgs1 = MONITOR;
-                        }
                         if (compareString(app_ptr->strArg1, "sound signal") == 0)
-                        {
                             exec->strArgs1 = SOUND_SIGNAL;
-                        }
                         if (compareString(app_ptr->strArg1, "ethernet") == 0)
-                        {
                             exec->strArgs1 = ETHERNET;
-                        }
                         if (compareString(app_ptr->strArg1, "hard drive") == 0)
-                        {
                             exec->strArgs1 = HDD;
-                        }
                         if (compareString(app_ptr->strArg1, "keyboard") == 0)
-                        {
                             exec->strArgs1 = KEYBOARD;
-                        }
                         if (compareString(app_ptr->strArg1, "serial") == 0)
-                        {
                             exec->strArgs1 = SERIAL;
-                        }
                         if (compareString(app_ptr->strArg1, "video signal") == 0)
-                        {
                             exec->strArgs1 = VIDEO_SIGNAL;
-                        }
                         if (compareString(app_ptr->strArg1, "usb") == 0)
-                        {
                             exec->strArgs1 = USB;
-                        }
 
                         exec->time = exec->intArg2 * configPtr->ioCycleRate;
                     }
@@ -389,13 +355,9 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
                         exec->command = MEM;
 
                         if (compareString(app_ptr->strArg1, "access") == 0)
-                        {
                             exec->strArgs1 = ACCESS;
-                        }
                         else if (compareString(app_ptr->strArg1, "allocate") == 0)
-                        {
                             exec->strArgs1 = ALLOCATE;
-                        }
 
                         exec->time = 0;
                     }
@@ -405,23 +367,17 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
                 }
 
                 if (prevProcess != NULL)
-                {
                     prevProcess->next = process_list;
-                }
                 else
-                {
                     root_process_list = process_list;
-                }
 
                 prevProcess = process_list;
                 process_cnt++;
             }
         }
         else
-        {
             range++;
-        }
-
+            
         ptr = ptr->nextNode;
     }
 

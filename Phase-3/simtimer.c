@@ -56,7 +56,6 @@ double accessTimer(int controlCode, char *timeStr)
         lapUSec = 0.00000000;
         timeToString(lapSec, lapUSec, timeStr);
         break;
-
     case LAP_TIMER:
         if (running == True)
         {
@@ -66,11 +65,8 @@ double accessTimer(int controlCode, char *timeStr)
             fpTime = processTime(startSec, lapSec, startUSec, lapUSec, timeStr);
         }
         else
-        {
             fpTime = 0.00000000;
-        }
         break;
-
     case STOP_TIMER:
         if (running == True)
         {
@@ -81,9 +77,7 @@ double accessTimer(int controlCode, char *timeStr)
             fpTime = processTime(startSec, endSec, startUSec, endUSec, timeStr);
         }
         else
-        {
             fpTime = 0.00000000;
-        }
         break;
     }
 
@@ -103,7 +97,6 @@ double processTime(double startSec, double endSec, double startUSec, double endU
     }
 
     timeToString(secDiff, uSecDiff, timeStr);
-
     return fpTime;
 }
 
