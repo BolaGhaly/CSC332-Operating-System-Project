@@ -94,17 +94,11 @@ Boolean getConfigData(char *fileName, ConfigDataType **configData,
         if (dataLineCode != CFG_CORRUPT_PROMT_ERR)
         {
             if (dataLineCode == CFG_VERSION_CODE)
-            {
                 fscanf(fileAccessPtr, "%lf", &doubleData);
-            }
             else if (dataLineCode == CFG_MD_FILE_NAME_CODE || dataLineCode == CFG_LOG_FILE_NAME_CODE || dataLineCode == CFG_CPU_SCHED_CODE || dataLineCode == CFG_LOG_TO_CODE)
-            {
                 fscanf(fileAccessPtr, "%s", dataBuffer);
-            }
             else
-            {
                 fscanf(fileAccessPtr, "%d", &intData);
-            }
 
             if (valueInRange(dataLineCode, intData, doubleData, dataBuffer) == True)
             {
@@ -191,24 +185,16 @@ ConfigDataCodes getCpuSchedCode(char *codeStr)
     setStrToLowerCase(tempStr, codeStr);
 
     if (compareString(tempStr, "sjf-n") == STR_EQ)
-    {
         returnVal = CPU_SCHED_SJF_N_CODE;
-    }
 
     if (compareString(tempStr, "srtf-p") == STR_EQ)
-    {
         returnVal = CPU_SCHED_SRTF_P_CODE;
-    }
 
     if (compareString(tempStr, "fcfs-p") == STR_EQ)
-    {
         returnVal = CPU_SCHED_FCFS_P_CODE;
-    }
 
     if (compareString(tempStr, "rr-p") == STR_EQ)
-    {
         returnVal = CPU_SCHED_RR_P_CODE;
-    }
 
     free(tempStr);
     return returnVal;
@@ -217,49 +203,31 @@ ConfigDataCodes getCpuSchedCode(char *codeStr)
 int getDataLineCode(char *dataBuffer)
 {
     if (compareString(dataBuffer, "Version/Phase") == STR_EQ)
-    {
         return CFG_VERSION_CODE;
-    }
 
     if (compareString(dataBuffer, "File Path") == STR_EQ)
-    {
         return CFG_MD_FILE_NAME_CODE;
-    }
 
     if (compareString(dataBuffer, "CPU Scheduling Code") == STR_EQ)
-    {
         return CFG_CPU_SCHED_CODE;
-    }
 
     if (compareString(dataBuffer, "Quantum Time (cycles)") == STR_EQ)
-    {
         return CFG_QUANT_CYCLES_CODE;
-    }
 
     if (compareString(dataBuffer, "Memory Available (KB)") == STR_EQ)
-    {
         return CFG_MEM_AVAILABLE_CODE;
-    }
 
     if (compareString(dataBuffer, "Processor Cycle Time (msec)") == STR_EQ)
-    {
         return CFG_PROC_CYCLES_CODE;
-    }
 
     if (compareString(dataBuffer, "I/O Cycle Time (msec)") == STR_EQ)
-    {
         return CFG_IO_CYCLES_CODE;
-    }
 
     if (compareString(dataBuffer, "Log To") == STR_EQ)
-    {
         return CFG_LOG_TO_CODE;
-    }
 
     if (compareString(dataBuffer, "Log File Path") == STR_EQ)
-    {
         return CFG_LOG_FILE_NAME_CODE;
-    }
 
     return CFG_CORRUPT_PROMT_ERR;
 }
@@ -273,14 +241,10 @@ ConfigDataCodes getLogToCode(char *logToStr)
     setStrToLowerCase(tempStr, logToStr);
 
     if (compareString(tempStr, "both") == STR_EQ)
-    {
         returnVal = LOGTO_BOTH_CODE;
-    }
 
     if (compareString(tempStr, "file") == STR_EQ)
-    {
         returnVal = LOGTO_FILE_CODE;
-    }
 
     free(tempStr);
     return returnVal;
@@ -296,64 +260,39 @@ Boolean valueInRange(int lineCode, int intVal, double doubleVal, char *stringVal
     {
     case CFG_VERSION_CODE:
         if (doubleVal < 0.00 || doubleVal > 10.0)
-        {
             result = False;
-        }
         break;
-
     case CFG_CPU_SCHED_CODE:
         strLen = getStringLength(stringVal);
         tempStr = (char *)malloc(strLen + 1);
         setStrToLowerCase(tempStr, stringVal);
-
         if (compareString(tempStr, "fcfs-n") != STR_EQ && compareString(tempStr, "sjf-n") != STR_EQ && compareString(tempStr, "srtf-p") != STR_EQ && compareString(tempStr, "fcfs-p") != STR_EQ && compareString(tempStr, "rr-p") != STR_EQ)
-        {
             result = False;
-        }
 
         free(tempStr);
         break;
-
     case CFG_QUANT_CYCLES_CODE:
         if (intVal < 0 || intVal > 100)
-        {
             result = False;
-        }
-
         break;
-
     case CFG_MEM_AVAILABLE_CODE:
         if (intVal < 1024 || intVal > 102400)
-        {
             result = False;
-        }
         break;
-
     case CFG_PROC_CYCLES_CODE:
         if (intVal < 1 || intVal > 100)
-        {
             result = False;
-        }
-
         break;
-
     case CFG_IO_CYCLES_CODE:
         if (intVal < 1 || intVal > 1000)
-        {
             result = False;
-        }
-
         break;
-
     case CFG_LOG_TO_CODE:
         strLen = getStringLength(stringVal);
         tempStr = (char *)malloc(strLen + 1);
         setStrToLowerCase(tempStr, stringVal);
-
         if (compareString(tempStr, "both") != STR_EQ && compareString(tempStr, "monitor") != STR_EQ && compareString(tempStr, "file") != STR_EQ)
-        {
             result = False;
-        }
 
         free(tempStr);
         break;

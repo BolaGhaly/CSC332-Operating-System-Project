@@ -30,9 +30,7 @@ void output(char *message, ConfigDataType *configPtr)
     }
 
     if (configPtr->logToCode == LOGTO_MONITOR_CODE)
-    {
         printf("[ %s] %s\n", value, message);
-    }
 
     free(value);
 }
@@ -50,6 +48,7 @@ void timer(double millisecond)
 {
     if (millisecond <= 1e-3)
         return;
+
     pthread_t pid;
     double *ptr = (double *)malloc(sizeof(double));
     *ptr = millisecond;
@@ -78,9 +77,7 @@ Boolean runProcess(process_t *current_process, ConfigDataType *configDataType)
     }
 
     if (current_process->start_flag == 1)
-    {
         return True;
-    }
 
     int i;
 
@@ -157,14 +154,12 @@ Boolean runProcess(process_t *current_process, ConfigDataType *configDataType)
                 sprintf(value, "Process: %d Memory allocation from %d to %d.", running_process_identifier, current_process->execution_flow[i].intArg2, current_process->execution_flow[i].intArg3);
                 output(value, configDataType);
                 Boolean result = mem_alloca_func(current_process->execution_flow[i].intArg2, current_process->execution_flow[i].intArg3);
+
                 if (result)
-                {
                     sprintf(value, "Process: %d Memory allocation from %d to %d success.", running_process_identifier, current_process->execution_flow[i].intArg2, current_process->execution_flow[i].intArg3);
-                }
                 else
-                {
                     sprintf(value, "Process: %d Memory allocation from %d to %d failed.", running_process_identifier, current_process->execution_flow[i].intArg2, current_process->execution_flow[i].intArg3);
-                }
+
                 output(value, configDataType);
                 free(value);
                 break;
@@ -176,14 +171,12 @@ Boolean runProcess(process_t *current_process, ConfigDataType *configDataType)
                         current_process->execution_flow[i].intArg2);
                 output(value, configDataType);
                 Boolean result = mem_access_func(current_process->execution_flow[i].intArg2);
+
                 if (result)
-                {
                     sprintf(value, "Process: %d Memory access to %d success.", running_process_identifier, current_process->execution_flow[i].intArg2);
-                }
                 else
-                {
                     sprintf(value, "Process: %d Memory access to %d failed.", running_process_identifier, current_process->execution_flow[i].intArg2);
-                }
+
                 output(value, configDataType);
                 free(value);
                 break;
@@ -210,9 +203,7 @@ void initial_process(int n, ConfigDataType *configPtr)
 void memset_usr(char *ptr, int count, char value)
 {
     for (int i = 0; i < count; ++i)
-    {
         ptr[i] = value;
-    }
 }
 
 void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
@@ -239,18 +230,12 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
         if (compareString(ptr->command, "sys") == 0)
         {
             if (compareString(ptr->strArg1, "start") == 0)
-            {
                 process_list->start_flag = 1;
-            }
             else
-            {
                 process_list->end_flag = 1;
-            }
 
             if (prevProcess != NULL)
-            {
                 prevProcess->next = process_list;
-            }
 
             prevProcess = process_list;
             process_list = (process_t *)malloc(sizeof(process_t));
@@ -299,59 +284,35 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
                     else if (compareString(app_ptr->command, "dev") == 0)
                     {
                         if (compareString(app_ptr->inOutArg, "in") == 0)
-                        {
                             process_list->execution_flow[command_idx].command = DEVIN;
-                        }
                         else if (compareString(app_ptr->inOutArg, "out") == 0)
-                        {
                             process_list->execution_flow[command_idx].command = DEVOUT;
-                        }
 
                         if (compareString(app_ptr->strArg1, "monitor") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = MONITOR;
-                        }
                         if (compareString(app_ptr->strArg1, "sound signal") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = SOUND_SIGNAL;
-                        }
                         if (compareString(app_ptr->strArg1, "ethernet") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = ETHERNET;
-                        }
                         if (compareString(app_ptr->strArg1, "hard drive") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = HDD;
-                        }
                         if (compareString(app_ptr->strArg1, "keyboard") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = KEYBOARD;
-                        }
                         if (compareString(app_ptr->strArg1, "serial") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = SERIAL;
-                        }
                         if (compareString(app_ptr->strArg1, "video signal") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = VIDEO_SIGNAL;
-                        }
                         if (compareString(app_ptr->strArg1, "usb") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = USB;
-                        }
                     }
                     else if (compareString(app_ptr->command, "mem") == 0)
                     {
                         process_list->execution_flow[command_idx].command = MEM;
 
                         if (compareString(app_ptr->strArg1, "access") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = ACCESS;
-                        }
                         else if (compareString(app_ptr->strArg1, "allocate") == 0)
-                        {
                             process_list->execution_flow[command_idx].strArgs1 = ALLOCATE;
-                        }
                     }
 
                     process_list->execution_flow[command_idx].intArg2 = app_ptr->intArg2;
@@ -365,9 +326,7 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
                 process_list->execution_flow[command_idx].strArgs1 = END;
 
                 if (prevProcess != NULL)
-                {
                     prevProcess->next = process_list;
-                }
 
                 prevProcess = process_list;
                 process_list = (process_t *)malloc(sizeof(process_t));
@@ -375,9 +334,8 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
             }
         }
         else
-        {
             range++;
-        }
+
         ptr = ptr->nextNode;
     }
 
@@ -390,9 +348,8 @@ void runSim(ConfigDataType *configPtr, OpCodeType *metaDataMasterPtr)
     {
         simRun = runProcess(process_list, configPtr);
         if (!simRun)
-        {
             break;
-        }
+
         process_list = process_list->next;
     }
 
